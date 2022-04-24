@@ -40,18 +40,34 @@ class CurdOperationsApplicationTests {
 
 	@Test
 	public void shouldCreateEntity() throws Exception {
-		mockMvc.perform(post("/api/v1/todo")
+		MvcResult mvcResult = mockMvc.perform(post("/api/v1/todo")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(
 				asJsonString( Todo.builder()
-						.title("hi kiran")
+						.title("hi kiran kumar")
 						.description("Buy eggs from market")
 						.todoStatus(TodoStatus.NOT_COMPLETED)
 						.dateCreated(Timestamp.valueOf("2022-04-23 7:44:08"))
 						.lastModified(Timestamp.valueOf("2022-04-23 7:44:08"))
 						.build()))).andExpect(
-				status().isCreated()).andExpect(
-				header().string("todo", containsString("api/v1/todo/")));
+				status().isCreated()).andReturn();
+		String location = mvcResult.getResponse().getHeader("todo");
+		mockMvc.perform(get(location)).andExpect(status().isOk());
+
+	}
+	@Test
+	public void shouldUpdateEntity() throws Exception {
+		mockMvc.perform(put("/api/v1/todo/3")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(
+						asJsonString( Todo.builder()
+								.title("hi kiran kumar")
+								.description("Buy eggs from market")
+								.todoStatus(TodoStatus.NOT_COMPLETED)
+								.dateCreated(Timestamp.valueOf("2022-04-23 7:44:08"))
+								.lastModified(Timestamp.valueOf("2022-04-23 7:44:08"))
+								.build()))).andExpect(
+				status().isOk());
 	}
 
 	public static String asJsonString(final Object obj) {
